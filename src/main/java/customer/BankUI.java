@@ -79,15 +79,20 @@ public class BankUI {
 				break;
 				
 			case 3: // Log In
-				System.out.println("Log IN y/n");
+				System.out.println("Log IN (y/n)");
 				String confirmLog = input.next();
 				displayCustomer(manager);
 				if ("y".equalsIgnoreCase(confirmLog)) {
 					
 					String email = readEmail(input);
+					
+//					manager.save(new Customer(email));
 				}	
-				
-			case 4: // Update New User Status
+				break;
+//			case 4: //Make a Deposit
+//				System.out.println("Make a Deposit");
+//				String 
+			case 5: // Update New User Status
 				System.out.println("Update User Status: Y/N");
 				String confirmUpdate = input.next();
 				
@@ -102,7 +107,7 @@ public class BankUI {
 					System.out.println("User Status Changed");
 				}
 				break;
-			case 5: // Exit
+			case 6: // Exit
 				System.out.println("Application Stopped");
 				System.exit(0);
 				break;
@@ -203,8 +208,9 @@ public class BankUI {
 		System.out.println("1. List Items");
 		System.out.println("2. Create a New Account");
 		System.out.println("3. Log IN");
-		System.out.println("4. Update New User Status");
-		System.out.println("5. Exit");
+		System.out.println("4. Make a Deposit");
+		System.out.println("5. Update New User Status");
+		System.out.println("6. Exit");
 	}
 
 	static void printTableFormat(List<Bank> list) {
@@ -220,6 +226,8 @@ public class BankUI {
 			System.out.println(" | Customer ID: " + customer.getCustomerId() + " | ");
 			System.out.println(" | Email Address: " + customer.getEmail() + " | ");
 			System.out.println(" | Password: " + customer.getPass() + " | ");
+			System.out.println(" | Checking: " + customer.getChecking() + " | ");
+			System.out.println(" | Saving: " + customer.getSaving() + " | ");
 			System.out.println("--------------------" + "\n");
 			}
 	}
