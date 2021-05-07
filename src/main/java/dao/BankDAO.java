@@ -13,7 +13,7 @@ import exceptions.ItemNotFoundException;
 import model.Bank;
 import util.DBConnection;
 
-//Persistence Layer
+//bank Persistence Layer
 public class BankDAO {
 
 	
@@ -25,7 +25,7 @@ public class BankDAO {
 		
 		try {
 			Connection con = DBConnection.getInstance().getConnection();
-			String sql = "SELECT bankid, new_user, account_email, account_password FROM bank";
+			String sql = "SELECT bankid, new_user, account_email FROM bank";
 			
 			logger.debug("fetching data", sql);
 			
@@ -37,9 +37,9 @@ public class BankDAO {
 				int bankid = rs.getInt("bankid");
 				String nuser = rs.getString("new_user");
 				String bemail = rs.getString("account_email");
-				String bpass = rs.getString("account_password");
 				
-				bank.add(new Bank(bankid, nuser, bemail, bpass));
+				
+				bank.add(new Bank(bankid, nuser, bemail));
 			}
 					
 		} catch (SQLException e) {
@@ -51,6 +51,7 @@ public class BankDAO {
 		return bank;
 	}
 	
+	
 	public Bank findById(int bankid) throws ItemNotFoundException, Exception {
 		
 		Bank bank = null;
@@ -59,7 +60,7 @@ public class BankDAO {
 		
 		logger.debug("fetching data for bankid: " + bankid);
 		
-		String sql = "SELECT bankid, new_user, account_email, account_password FROM bank WHERE bankid = ?";
+		String sql = "SELECT bankid, new_user, account_email FROM bank WHERE bankid = ?";
 		
 		logger.debug(sql);
 		
@@ -71,9 +72,9 @@ public class BankDAO {
 		if (rs.next() ) {
 			String nuser = rs.getString("new_user");
 			String bemail = rs.getString("account_email");
-			String bpass = rs.getString("account_password");
 			
-			bank = new Bank(bankid, nuser, bemail, bpass);
+			
+			bank = new Bank(bankid, nuser, bemail);
 		} else {
 			throw new ItemNotFoundException();
 		}
@@ -90,14 +91,13 @@ public class BankDAO {
 		
 		Connection con = DBConnection.getInstance().getConnection();
 		
-		String sql = "INSERT INTO bank (account_email, account_password) VALUES (?,?)";
+		String sql = "INSERT INTO bank (account_email) VALUES (?)";
 		
 		logger.debug(sql);
 		
 		PreparedStatement pstmt = con.prepareStatement(sql);
 		
 		pstmt.setString(1, bank.getEmail());
-		pstmt.setString(2, bank.getPassword());
 						
 		inserted = pstmt.executeUpdate();
 		
@@ -106,24 +106,24 @@ public class BankDAO {
 		return inserted != 0;
 	}
 	
-	public boolean updateStatus(int id, boolean newUser) throws Exception {
+	public boolean updateStatus(int bankid, boolean newUser) throws Exception {
 		
 		logger.debug("Received bank new user update: " + newUser);
 		
 		Connection con = DBConnection.getInstance().getConnection();
 		
-		String sql = "UPDATE bank SET new_user = ? WHERE id = ?";
+		String sql = "UPDATE bank SET new_user = ? WHERE bankid = ?";
 		
 		logger.debug(sql);
 		
 		PreparedStatement pstmt = con.prepareStatement(sql);
 		
 		pstmt.setString(1, newUser ? "Y" : "N");
-		pstmt.setInt(2, id);
+		pstmt.setInt(2, bankid);
 		
 		int updated = pstmt.executeUpdate();
 		
-		logger.debug("Updated todo: " + updated);
+		logger.debug("Updated bank: " + updated);
 		
 		return updated != 0;
 	}
