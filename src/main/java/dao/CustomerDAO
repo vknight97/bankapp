@@ -1,0 +1,153 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import exceptions.ItemNotFoundException;
+import model.Customer;
+import util.DBConnection;
+
+//customer persistence layer
+public class CustomerDAO {
+
+	
+	private static final Logger logger = LogManager.getLogger(CustomerDAO.class);
+
+		public ArrayList<Customer> findCustomer() throws Exception {
+		
+		ArrayList<Customer> customer = new ArrayList<Customer>();
+		
+		try {
+			Connection con = DBConnection.getInstance().getConnection();
+			String sql = "SELECT customerid, email, password, checking, saving FROM customer";
+			
+			logger.debug("fetching data", sql);
+			
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			
+			ResultSet rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				int customerid = rs.getInt("customerid");
+				String email = rs.getString("email");
+				String pass = rs.getString("password");
+				int checking = rs.getInt("checking");
+				int saving = rs.getInt("saving");
+				
+				customer.add(new Customer(customerid, email, pass, checking, saving));
+			}
+					
+		} catch (SQLException e) {
+			logger.error("Unable to perform DB operation", e);
+			throw e;
+		}
+		
+		logger.debug("Returning results", customer);
+		return customer;
+	}
+
+	public Customer findByCustomerId(int customerid) throws ItemNotFoundException, Exception {
+		
+		Customer customer = null;
+		
+		Connection con = DBConnection.getInstance().getConnection();
+		
+		logger.debug("fetching data for customerid: " + customerid);
+		
+		String sql = "SELECT customerid, email, password, checking, saving FROM customer WHERE customerid = ?";
+		
+		logger.debug(sql);
+		
+		PreparedStatement pstmt = con.prepareStatement(sql);
+		pstmt.setInt(1, customerid);
+		
+		ResultSet rs = pstmt.executeQuery();
+		
+		if (rs.next()) {
+			String email = rs.getString("email");
+			String pass = rs.getString("password");
+			
+			customer = new Customer(customerid, email, pass);
+		} else {
+			throw new ItemNotFoundException();
+		}
+		
+		logger.debug("Returning customer",customer);
+		
+		return customer;
+	}
+	
+	public boolean save(Customer customer) throws Exception {
+		int inserted = 0;
+		
+		logger.debug("Received customer data to save: " + customer);
+		
+		Connection con = DBConnection.getInstance().getConnection();
+		
+		String sql = "INSERT INTO customer (email, password) VALUES (?,?)";
+		
+		logger.debug(sql);
+		
+		PreparedStatement pstmt = con.prepareStatement(sql);
+		
+		pstmt.setString(1, customer.getEmail());
+		
+		inserted = pstmt.executeUpdate();
+		
+		logger.debug("Inserted customer: " + inserted);
+		
+		return inserted != 0;
+		
+	}
+	
+	public boolean updateChecking(int customerid, int checking) throws Exception {
+		
+		logger.debug("Receieved bank new Checking update: " + customerid);
+		
+		Connection con = DBConnection.getInstance().getConnection();
+		
+		String sql = "UPDATE customer set checking = ? WHERE customerid = ?";
+		
+		logger.debug(sql);
+		
+		PreparedStatement pstmt = con.prepareStatement(sql);
+		
+		pstmt.setInt(1, customerid);
+		pstmt.setInt(2, checking);
+		
+		int updated = pstmt.executeUpdate();
+		
+		logger.debug("Updated customer: " + updated);
+		
+		return updated !=0;
+	}
+	
+	public boolean updateSaving(int customerid, int saving) throws Exception {
+		
+		logger.debug("Receieved bank new Checking update: " + customerid);
+		
+		Connection con = DBConnection.getInstance().getConnection();
+		
+		String sql = "UPDATE customer set saving = ? WHERE customerid = ?";
+		
+		logger.debug(sql);
+		
+		PreparedStatement pstmt = con.prepareStatement(sql);
+		
+		pstmt.setInt(1, customerid);
+		pstmt.setInt(2, saving);
+		
+		int updated = pstmt.executeUpdate();
+		
+		logger.debug("Updated customer: " + updated);
+		
+		return updated !=0;
+	}
+
+}
