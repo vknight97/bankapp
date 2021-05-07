@@ -1,14 +1,17 @@
-create table public.bank(
-	bankId serial not null,
-	new_user char(1) not null default 'Y',
-	account_email varchar null,
-	account_password varchar null
+CREATE TABLE public.bank (
+	bankid serial NOT NULL,
+	new_user bpchar(1) NOT NULL DEFAULT 'Y'::bpchar,
+	account_email varchar NOT NULL,
+	CONSTRAINT bank_pk PRIMARY KEY (bankid, account_email)
 );
 
 
-create table public.customer(
-	customerId serial not null,
-	email varchar null,
-	Checking dec(18,2) null,
-	Saving dec(18,2) null
+CREATE TABLE public.customer (
+	customerid serial NOT NULL,
+	email varchar NULL,
+	checking numeric(18,2) NULL,
+	saving numeric(18,2) NULL,
+	"password" varchar NULL,
+	CONSTRAINT customer_fk FOREIGN KEY (customerid, email) REFERENCES bank(bankid, account_email)
 );
+
