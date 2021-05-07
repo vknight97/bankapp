@@ -69,16 +69,38 @@ public class BankUI {
 
 					String nuser = readNuser(input);
 					String bemail = readBemail(input);
-					String bpass = readBpass(input);
 
 					// saving data
-					manager.save(new Bank(nuser, bemail, bpass));
+					manager.save(new Bank(nuser, bemail));
 					System.out.println("Item Saved");
 				}
 				break;
-//		case 3: // Update Item Status
-//			System.out.println();
-			case 3: // Exit
+				
+	/*		case 3: // Log In
+				System.out.println("Log IN y/n");
+				String confirmLog = input.next();
+				
+				if ("y".equalsIgnoreCase(confirmLog)) {
+					
+					String email = readEmail(input);
+				}	
+		*/		
+			case 4: // Update New User Status
+				System.out.println("Update User Status: Y/N");
+				String confirmUpdate = input.next();
+				
+				if ("y".equalsIgnoreCase(confirmUpdate)) {
+					
+					displayBank(manager);
+					
+					int bankid = readId(input, manager);
+					String doneInput = readNuser(input);
+					
+					manager.update(bankid, doneInput.equalsIgnoreCase("y") ? true : false);
+					System.out.println("User Status Changed");
+				}
+				break;
+			case 5: // Exit
 				System.out.println("Application Stopped");
 				System.exit(0);
 				break;
@@ -101,7 +123,7 @@ public class BankUI {
 		} while (nuserInput == null);
 		return nuserInput;
 	}
-
+//for update
 	private static int readId(Scanner input, BankManager manager) throws Exception {
 		int bankid;
 		do {
@@ -116,14 +138,14 @@ public class BankUI {
 		return bankid;
 	}
 
-//figure out email format for if function
+//needs regex for email input
 	private static String readBemail(Scanner input) {
 		String bemailInput;
 		do {
 			System.out.println("Email Address:");
 			bemailInput = input.next();
 
-			if (bemailInput.matches("%@%.com")) {
+			if (bemailInput.matches("anything")) {
 				bemailInput = null;
 				System.out.println("not a valid email address");
 			}
@@ -131,19 +153,15 @@ public class BankUI {
 		return bemailInput;
 	}
 //PASSWORD LOGIC	
-	private static String readBpass(Scanner input) {
-		String bpassInput;
-		do {
-			System.out.println("Password: MUST HAVE AT LEAST 8 Characters");
-			bpassInput = input.next();
-
-			if (bpassInput.matches("%") && bpassInput.length() > 8) {
-				bpassInput = null;
-				System.out.println("not a valid password");
-			}
-		} while (bpassInput == null);
-		return bpassInput;
-	}
+	/*
+	 * private static String readBpass(Scanner input) { String bpassInput; do {
+	 * System.out.println("Password: MUST HAVE AT LEAST 8 Characters"); bpassInput =
+	 * input.next();
+	 * 
+	 * if (bpassInput.matches("%") && bpassInput.length() > 8) { bpassInput = null;
+	 * System.out.println("not a valid password"); } } while (bpassInput == null);
+	 * return bpassInput; }
+	 */
 
 	private static boolean isValidId(BankManager manager, int bankid) throws Exception {
 		try {
@@ -163,16 +181,16 @@ public class BankUI {
 		System.out.println();
 		System.out.println("1. List Items");
 		System.out.println("2. Create a New Account");
-		System.out.println("3. Exit");
+		System.out.println("3. Update New User Status");
+		System.out.println("4. Exit");
 	}
 
 	static void printTableFormat(List<Bank> list) {
-		for (Bank bank1 : list) {
-			System.out.println(bank1.getbankId() + " | ");
-			System.out.println(bank1.getNewUser() + " | ");
-			System.out.println(bank1.getEmail() + " | ");
-			System.out.println(bank1.getPassword() + " | ");
-			System.out.println("--------------------");
+		for (Bank bank : list) {
+			System.out.println(" | Bank ID: " + bank.getbankid() + " | ");
+			System.out.println(" | New User?: " + bank.getNewUser() + " | ");
+			System.out.println(" | Email Address: " + bank.getEmail() + " | ");
+			System.out.println("--------------------" + "\n");
 		}
 	}
 
