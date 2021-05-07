@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import bank.BankManager;
 import exceptions.ItemNotFoundException;
 import model.Bank;
+import model.Customer;
 import util.ConfigReader;
 
 //User Interface for Bank App
@@ -65,6 +66,7 @@ public class BankUI {
 			case 2: // Add Item to new user Table
 				System.out.println("New User? (y/n): ");
 				String confirmAdd = input.next();
+				
 				if ("y".equalsIgnoreCase(confirmAdd)) {
 
 					String nuser = readNuser(input);
@@ -76,15 +78,15 @@ public class BankUI {
 				}
 				break;
 				
-	/*		case 3: // Log In
+			case 3: // Log In
 				System.out.println("Log IN y/n");
 				String confirmLog = input.next();
-				
+				displayCustomer(manager);
 				if ("y".equalsIgnoreCase(confirmLog)) {
 					
 					String email = readEmail(input);
 				}	
-		*/		
+				
 			case 4: // Update New User Status
 				System.out.println("Update User Status: Y/N");
 				String confirmUpdate = input.next();
@@ -152,6 +154,20 @@ public class BankUI {
 		} while (bemailInput == null);
 		return bemailInput;
 	}
+	
+	private static String readEmail(Scanner input) {
+		String emailInput;
+		do {
+			System.out.println("Email Address:");
+			emailInput = input.next();
+
+			if (emailInput.matches("anything")) {
+				emailInput = null;
+				System.out.println("not a valid email address");
+			}
+		} while (emailInput == null);
+		return emailInput;
+	}
 //PASSWORD LOGIC	
 	/*
 	 * private static String readBpass(Scanner input) { String bpassInput; do {
@@ -176,13 +192,19 @@ public class BankUI {
 		List<Bank> bank = manager.findAll();
 		printTableFormat(bank);
 	}
+	
+	private static void displayCustomer(BankManager manager) throws Exception {
+		List<Customer> customer = manager.findCustomer();
+		printTableFormat2(customer);
+	}
 
 	private static void showMainMenu() {
 		System.out.println();
 		System.out.println("1. List Items");
 		System.out.println("2. Create a New Account");
-		System.out.println("3. Update New User Status");
-		System.out.println("4. Exit");
+		System.out.println("3. Log IN");
+		System.out.println("4. Update New User Status");
+		System.out.println("5. Exit");
 	}
 
 	static void printTableFormat(List<Bank> list) {
@@ -192,6 +214,14 @@ public class BankUI {
 			System.out.println(" | Email Address: " + bank.getEmail() + " | ");
 			System.out.println("--------------------" + "\n");
 		}
+	}	
+	static void printTableFormat2(List<Customer> list2) {
+		for (Customer customer : list2) {
+			System.out.println(" | Customer ID: " + customer.getCustomerId() + " | ");
+			System.out.println(" | Email Address: " + customer.getEmail() + " | ");
+			System.out.println(" | Password: " + customer.getPass() + " | ");
+			System.out.println("--------------------" + "\n");
+			}
 	}
 
 }
